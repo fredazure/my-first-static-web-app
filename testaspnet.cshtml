@@ -1,0 +1,16 @@
+public static async Task Run(HttpRequest req, ILogger log)
+{
+string htmlContent = @"
+
+
+
+Welcome to Shades4You!
+
+";
+
+return new ContentResult
+{
+Content = htmlContent,
+ContentType = "text/html",
+};
+}
