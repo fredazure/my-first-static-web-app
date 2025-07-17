@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enkel Webbläsare - Python Program</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2em;
+        }
+
+        .browser-mockup {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin: 40px 0;
+            overflow: hidden;
+            animation: slideInUp 1s ease-out;
+        }
+
+        .browser-bar {
+            background: #f5f5f5;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .browser-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .url-bar {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            margin: 0 10px;
+        }
+
+        .browser-content {
+            padding: 20px;
+            min-height: 300px;
+            background: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+        .feature-card:nth-child(5) { animation-delay: 0.5s; }
+        .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .feature-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .feature-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .feature-description {
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .code-snippet {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .demo-section {
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 15px;
+            margin: 50px 0;
+            text-align: center;
+        }
+
+        .demo-section h2 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .demo-section p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .tech-item {
+            background: rgba(255,255,255,0.2);
+            padding: 15px 25px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .tech-item:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .status-bar {
+            background: #f0f0f0;
+            padding: 10px 20px;
+            border-top: 1px solid #ddd;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse { animation: pulse 2s infinite; }
+
+        .highlight {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .browser-bar { flex-direction: column; gap: 10px; }
+            .url-bar { margin: 0; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Enkel Webbläsare</h1>
+            <p>Ett Python-program byggt med tkinter som visar kraften i desktop-applikationer</p>
+        </div>
+
+        <div class="browser-mockup">
+            <div class="browser-bar">
+                <div class="browser-controls">
+                    <button class="btn" id="backBtn" disabled>←</button>
+                    <button class="btn" id="forwardBtn" disabled>→</button>
+                    <button class="btn" id="refreshBtn">↻</button>
+                </div>
+                <input type="text" class="url-bar" id="urlBar" placeholder="Skriv in en URL här..." value="https://example.com">
+                <button class="btn" id="goBtn">Gå</button>
+            </div>
+            <div class="browser-content">
+                <h3>Välkommen till din egen webbläsare!</h3>
+                <p>Detta är en fungerande mockup av vad Python-programmet kan göra. Prova att klicka på knapparna ovan för att se hur navigationen fungerar.</p>
+                <div class="code-snippet">
+                    <strong>Huvudfunktioner:</strong><br>
+                    • HTTP-förfrågningar med requests-biblioteket<br>
+                    • HTML-parsing för att extrahera text och länkar<br>
+                    • Klickbara länkar som öppnar nya sidor<br>
+                    • Fullständig navigationhistorik (fram/tillbaka)<br>
+                    • Statusindikator som visar laddningsstatus
+                </div>
+            </div>
+            <div class="status-bar">
+                <span id="statusText">Redo</span>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3 class="feature-title">HTTP-förfrågningar</h3>
+                <p class="feature-description">Programmet använder requests-biblioteket för att göra HTTP-förfrågningar till webbsidor med timeout och custom headers.</p>
+                <div class="code-snippet">
+response = requests.get(url, timeout=10, headers={
+    'User-Agent': 'SimpleBrowser/1.0'
+})</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3 class="feature-title">HTML-parsing</h3>
+                <p class="feature-description">En anpassad HTML-parser som extraherar text och länkar från webbsidor för att visa dem i ett användarvänligt format.</p>
+                <div class="code-snippet">
+class SimpleHTMLParser(HTMLParser):
+    def handle_starttag(self, tag, attrs):
+        if tag == "a":
+            # Hantera länkar
+</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3 class="feature-title">Klickbara länkar</h3>
+                <p class="feature-description">Länkar från webbsidor blir klickbara och öppnar nya sidor direkt i webbläsaren. Relativa URLs konverteras automatiskt till absoluta.</p>
+                <div class="code-snippet">
+self.text_area.tag_bind("link", "&lt;Button-1&gt;", self.click_link)
+# Klickbara blå understrukna länkar</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⏮️</div>
+                <h3 class="feature-title">Navigationhistorik</h3>
+                <p class="feature-description">Fullständig fram/tillbaka-funktionalitet med historik som sparar alla besökta sidor och gör det möjligt att navigera mellan dem.</p>
+                <div class="code-snippet">
+self.history = []
+self.current_index = -1
+# Håller koll på var användaren befinner sig</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">Asynkron laddning</h3>
+                <p class="feature-description">Sidor laddas i separata trådar för att undvika att GUI:t fryser medan data hämtas från internet.</p>
+                <div class="code-snippet">
+thread = threading.Thread(target=self.fetch_page, args=(url,))
+thread.daemon = True
+thread.start()</div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3 class="feature-title">Statusindikator</h3>
+                <p class="feature-description">Visar aktuell status: "Laddar...", "Klar", eller "Fel" så användaren alltid vet vad som händer.</p>
+                <div class="code-snippet">
+self.status_var.set("Laddar...")
+# Realtidsuppdateringar av status</div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>Teknisk implementation</h2>
+            <p>Detta Python-program demonstrerar avancerad GUI-programmering med flera kraftfulla tekniker</p>
+            
+            <div class="tech-stack">
+                <div class="tech-item">🐍 Python</div>
+                <div class="tech-item">🖼️ tkinter</div>
+                <div class="tech-item">🌐 requests</div>
+                <div class="tech-item">🔧 threading</div>
+                <div class="tech-item">📝 HTML parsing</div>
+                <div class="tech-item">🎨 GUI design</div>
+            </div>
+
+            <div class="code-snippet">
+<strong>Huvudkomponenter:</strong><br>
+• <span class="highlight">SimpleBrowser</span> - Huvudklassen som hanterar GUI och logik<br>
+• <span class="highlight">SimpleHTMLParser</span> - Anpassad HTML-parser för att extrahera innehåll<br>
+• <span class="highlight">Threading</span> - Asynkron laddning för smidig användarupplevelse<br>
+• <span class="highlight">Event handling</span> - Klickbara länkar och navigationskontroller
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulera webbläsarfunktionalitet
+        const backBtn = document.getElementById('backBtn');
+        const forwardBtn = document.getElementById('forwardBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const urlBar = document.getElementById('urlBar');
+        const goBtn = document.getElementById('goBtn');
+        const statusText = document.getElementById('statusText');
+
+        let history = ['https://example.com'];
+        let currentIndex = 0;
+
+        function updateButtons() {
+            backBtn.disabled = currentIndex <= 0;
+            forwardBtn.disabled = currentIndex >= history.length - 1;
+        }
+
+        function navigate(url) {
+            if (currentIndex < history.length - 1) {
+                history = history.slice(0, currentIndex + 1);
+            }
+            history.push(url);
+            currentIndex++;
+            updateButtons();
+            
+            statusText.textContent = 'Laddar...';
+            setTimeout(() => {
+                statusText.textContent = 'Klar';
+            }, 1000);
+        }
+
+        goBtn.addEventListener('click', () => {
+            const url = urlBar.value;
+            if (url) {
+                navigate(url);
+            }
+        });
+
+        urlBar.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const url = urlBar.value;
+                if (url) {
+                    navigate(url);
+                }
+            }
+        });
+
+        backBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                urlBar.value = history[currentIndex];
+                updateButtons();
+                statusText.textContent = 'Navigerar tillbaka...';
+                setTimeout(() => {
+                    statusText.textContent = 'Klar';
+                }, 500);
+            }
+        });
+
+        forwardBtn.addEventListener('click', () => {
+            if (currentIndex < history.length - 1) {
+                currentIndex++;
+                urlBar.value = history[currentIndex];
+                updateButtons();
+                statusText.textContent = 'Navigerar framåt...';
+                setTimeout(() => {
+                    statusText.textContent = 'Klar';
+                }, 500);
+            }
+        });
+
+        refreshBtn.addEventListener('click', () => {
+            statusText.textContent = 'Uppdaterar...';
+            setTimeout(() => {
+                statusText.textContent = 'Klar';
+            }, 1000);
+        });
+
+        // Animera feature cards när de kommer in i view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.transform = 'translateY(0)';
+                    entry.target.style.opacity = '1';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Initial button state
+        updateButtons();
+    </script>
+</body>
+</html>
